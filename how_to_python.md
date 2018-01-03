@@ -51,7 +51,7 @@ To be honest, the more I read about it the more I realised that the first one is
 
 [Pipenv](https://github.com/pypa/pipenv) seems to pretty much do the above for you. It wraps around `virtualenv` to set up a project-specific virtual environment, and implements the `Pipfile` format to manage your dependencies. All this with simple commands that will hopefully feel familiar from the tooling of other nice languages. Apparently this solution is [officially recommended](https://packaging.python.org/tutorials/managing-dependencies/#managing-dependencies) by python.org.
 
-### Okay, let's actually do something with pipenv
+### Okay, let's install pipenv then
 
 I need Python and Pip. Apparently the asdf plugin for Python comes with Pip installed. Nice.
 
@@ -72,3 +72,82 @@ This brings us to *a very important gotcha!* Various things on the internet, lik
 ```
 pip install pipenv
 ```
+
+The first time I tried this, I got the error:
+
+```
+Could not import setuptools which is required to install from a source distribution.
+Please install setuptools.
+```
+
+I don't really know why this happened, but it seems that `setuptools` is a pip package and that we just need to install it. (It seems strange to me that pip, a tool for installing packages and their dependencies, didn't figure this out and do it by itself, but whatever.)
+
+```
+pip install setuptools
+pip install pipenv
+```
+
+Now that it's installed I want to run it.
+
+```
+% pipenv --version
+zsh: command not found: pipenv
+```
+
+Sad. I think this is because the `pipenv` executable is now sitting somewhere in the depths of `~/.asdf/`, and asdf hasn't yet figured out that it's a thing you want to be able to run and that needs to be in your `PATH` (i.e. it needs to have a "shim" for it). Luckily there's a magic command that sorts this out:
+
+```
+% asdf reshim python
+```
+
+Now we can run pipenv:
+
+```
+% pipenv --version
+pipenv, version 9.0.1
+```
+
+### Actually doing a thing with pipenv
+
+Let's pretend we want to do some data science.
+
+```
+mkdir data_science
+cd data_science
+```
+
+I know a lot of people use pandas to data science, so I want to install pandas.
+
+```
+pipenv install pandas
+```
+
+This does a bunch of things. One of them is to create a "virtualenv", which apparently lives in `~/.local/share/virtualenvs/data_science-OooVusIR`
+
+I was hoping I could let everything live inside asdf, but I guess this will have to be an exception. If I want to cleanse my system of all this stuff, I guess I'll have to remove this `~/.local/share/virtualenvs` directory.
+
+It's also created a `Pipfile` and a `Pipfile.lock`. Nice and familiar!
+
+We can run stuff inside the virtual environment with `pipenv run`. This seems pretty much the same as `bundle exec`:
+
+```
+% pipenv run python
+Python 3.6.4 (default, Jan  3 2018, 13:28:44)
+[GCC 4.2.1 Compatible Apple LLVM 9.0.0 (clang-900.0.39.2)] on darwin
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import pandas as pd
+>>>
+```
+
+This works, so I guess I have pandas now.
+
+Just type `pipenv` to get some colourful advice on what commands you can run.
+
+* `pipenv install --dev` is for dev-only dependencies, just like with npm
+* `pipenv --rm` removes the virtual environment again.
+* `pipenv install`, given that we have a Pipfile, installs the dependencies in the Pipfile just like `bundle install`
+
+Having done that, I feel pretty content that this lets me do what I wanted it to do. Time for a cup of tea!
+
+## Tests?
+
