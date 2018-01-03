@@ -160,3 +160,7 @@ As with most things Python in my experience so far, the hard thing isn't figurin
 `unittest.mock` seems to be the way to do mocking if you need to do mocking.
 
 `hypothesis` does property based testing.
+
+## Other notes and links
+
+* [The Definitive Guide to Python import Statements](https://chrisyeh96.github.io/2017/08/08/definitive-guide-python-imports.html)
