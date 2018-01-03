@@ -151,3 +151,12 @@ Having done that, I feel pretty content that this lets me do what I wanted it to
 
 ## Tests?
 
+I want to be able to write tests, and run them all easily.
+
+As with most things Python in my experience so far, the hard thing isn't figuring out how to use something, but figuring out which of the three or four things I should be using. The short answer seems to be that I should use `pytest`. It wraps around the built-in `unittest` library, and lets you avoid a lot of boilerplate. It also seems widely used. Cool.
+
+`doctest` might also be useful for some scenarios (especially the sort of little toy projects I'm likely to do while learning). Elixir has this feature built in (also called `doctest`) and it's nice. It lets you write little usage examples in comments right next to your functions, and turns them into assertions that you can run. Cool for speedy TDD.
+
+`unittest.mock` seems to be the way to do mocking if you need to do mocking.
+
+`hypothesis` does property based testing.
