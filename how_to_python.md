@@ -69,7 +69,7 @@ This brings us to *a very important gotcha!* Various things on the internet, lik
 
 *This is actually where my vague memory of having a bad feeling about `asdf` came from.* I previously tried to do all this with `asdf`, naively and unknowingly `pip install --user pipenv` and started feeling suspicious and frightened as files started appearing in `~/.local`, as I needed to add `~/.local/bin` to my `PATH`, and so on... Turns out it's fine if you do it right! So with that tension nicely resolved, let's go on.
 
-```
+```sh
 pip install pipenv
 ```
 
@@ -82,7 +82,7 @@ Please install setuptools.
 
 I don't really know why this happened, but it seems that `setuptools` is a pip package and that we just need to install it. (It seems strange to me that pip, a tool for installing packages and their dependencies, didn't figure this out and do it by itself, but whatever.)
 
-```
+```sh
 pip install setuptools
 pip install pipenv
 ```
@@ -96,7 +96,7 @@ zsh: command not found: pipenv
 
 Sad. I think this is because the `pipenv` executable is now sitting somewhere in the depths of `~/.asdf/`, and asdf hasn't yet figured out that it's a thing you want to be able to run and that needs to be in your `PATH` (i.e. it needs to have a "shim" for it). Luckily there's a magic command that sorts this out:
 
-```
+```sh
 % asdf reshim python
 ```
 
@@ -111,14 +111,14 @@ pipenv, version 9.0.1
 
 Let's pretend we want to do some data science.
 
-```
+```sh
 mkdir data_science
 cd data_science
 ```
 
 I know a lot of people use pandas to data science, so I want to install pandas.
 
-```
+```sh
 pipenv install pandas
 ```
 
@@ -160,6 +160,42 @@ As with most things Python in my experience so far, the hard thing isn't figurin
 `unittest.mock` seems to be the way to do mocking if you need to do mocking.
 
 `hypothesis` does property based testing.
+
+## What about Conda?
+
+The stuff above gets me to a setup that I feel very comfortable with as a Rubyist/Elixirist/Javascriptist. But I want to (pretend to be) a data scientist. They do things differently.
+
+They use Conda. I think. My first impression of this was that it's some sort of friendly and bloated Python distribution - it's a big thing that you install and it comes with all the packages you'll ever need preinstalled, so you never have to be explicit about any dependencies or understand where anything came from. Great if you're coming from a relatively non-technical background, grubby as hell if you're a developer. Then I [watched a talk](https://www.youtube.com/watch?v=9by46AAqz70) and [read an article](https://jakevdp.github.io/blog/2016/08/25/conda-myths-and-misconceptions/), and I don't think it seems that bad any more.
+
+Conda lets us do what `pipenv` lets us do, i.e. create multiple isolated environments and install packages inside them. The difference is that `pip` only manages Python packages. Some packages that are used for data sciencing (so I hear) depend on non-Python binaries/libraries/whatever. With `pip` we'd have to `brew install` these or something, and besides the `Pipfile` we'd need to come up with some other way of dealing with non-Python dependencies. Or we can use Conda to manage all these dependencies instead. Sounds great.
+
+There's Anaconda, which is kind of the friendly but grubby thing I mentioned above, a huge prepackaged bunch of packages (which I hasten to add I'm sure is very convenient and useful in a lot of situations). There's also Miniconda, which is just the package manager with nothing preinstalled. I think I want Miniconda.
+
+We could download the official installer (or `brew cask install miniconda`), but this would take over our system Python, and completely destroy my dream of using asdf to version-manage everything. Good news: looks like you can install Miniconda with asdf.
+
+```sh
+asdf install python miniconda3-4.3.30 # the latest version right now
+
+# I'll leave my system python as it is for now and just play around with this
+mkdir more_data_science
+cd more_data_science
+asdf local python miniconda3-4.3.30
+```
+
+I now have conda, but I no longer have python. I guess miniconda doesn't even come with Python preinstalled:
+
+```
+% conda --version
+conda 4.4.6
+% python --version
+No such command in miniconda3-4.3.30 of python
+```
+
+Conda seems to behave a lot like any other nice, familiar package manager - just `conda` gives a list of useful commands. So I'll `conda search python`, and `conda install python=3.6.4`, which is the latest version.
+
+It looks like this created a new environment for me - I'll need to figure out what this means, and how to manage more environments, later. For now, I can see that the "environment location" is `~/.asdf/installs/python/miniconda3-4.3.30` - this directory seems to have a whole Unix-style filesystem hierarchy inside it, and this is where Conda has now installed Python, as well as its non-Python dependencies like OpenSSL. It's all nicely contained within a conda environment which is contained within asdf. Success!
+
+![Yo dawg, I heard you like version managers so I put a version manager in your version manager so you can version manage while you version manage - Xzibit](https://memegenerator.net/img/instances/500x/81027239/yo-dawg-i-heard-you-like-version-managers-so-i-put-a-version-manager-in-your-version-manager-so-you-.jpg)
 
 ## Other notes and links
 
