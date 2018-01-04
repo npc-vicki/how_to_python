@@ -197,6 +197,30 @@ It looks like this created a new environment for me - I'll need to figure out wh
 
 ![Yo dawg, I heard you like version managers so I put a version manager in your version manager so you can version manage while you version manage - Xzibit](https://memegenerator.net/img/instances/500x/81027239/yo-dawg-i-heard-you-like-version-managers-so-i-put-a-version-manager-in-your-version-manager-so-you-.jpg)
 
+### Multiple Conda environments
+
+One thing conda lets you do is create multiple named environments (with different stuff installed) and switch between them. I ran into some problems with asdf when I tried this. Let's create a new named environment with Python 3.6 installed:
+
+```sh
+conda create --name huzzah python=3.6
+```
+
+Now you're supposed to be able to switch to this environment like this:
+
+```sh
+source activate huzzah
+```
+
+but this exits my shell. Before exiting, it says `Error: activate must be sourced. Run 'source activate envname' instead of 'activate envname'.`.
+
+Turns out this is a known problem with version managers that rely on shims, like asdf. It's not very well-attested (or googlable) with asdf, but there are [multiple reports](https://encrypted.google.com/search?hl=en&q=pyenv%20conda%20activate%20crashes%20shell) of the same problem with `pyenv`, which works in a similar way. [Here's a comment that sort of explains the reason.](https://github.com/pyenv/pyenv/issues/662#issuecomment-269145248) The issue is that the script is meant to be sourced, but shims are meant to be executed, not sourced - trying to source a shim (which is what we're doing when we `source activate` - see `which activate`) actually executes the file that it ultimately refers to (hence why it thinks it's been executed, not sourced). Tl;dr: this explanation led me to a fix - instead of trying to source the shim, we can source the `activate` script directly:
+
+```sh
+source ~/.asdf/installs/python/miniconda3-4.3.30/bin/activate data
+```
+
+This is pretty horrible. I guess I could alias it or something. I could also add `~/.asdf/installs/python/miniconda3-4.3.30/bin/` to my PATH (before the asdf shims directory) so I can `source activate` again, but this would seriously mess with asdf. I think an alias might be the way forward (although it'll need to change when I update the miniconda version in asdf).
+
 ## Other notes and links
 
 * [The Definitive Guide to Python import Statements](https://chrisyeh96.github.io/2017/08/08/definitive-guide-python-imports.html)
