@@ -122,9 +122,13 @@ I know a lot of people use pandas to data science, so I want to install pandas.
 pipenv install pandas
 ```
 
-This does a bunch of things. One of them is to create a "virtualenv", which apparently lives in `~/.local/share/virtualenvs/data_science-OooVusIR`
+I want everything to live inside asdf so it's easy to cleanse my system of all this stuff. Sadly this `pipenv install` command creates a "virtualenv", which lives in `~/.local/share/virtualenvs/data_science-OooVusIR`.
 
-I was hoping I could let everything live inside asdf, but I guess this will have to be an exception. If I want to cleanse my system of all this stuff, I guess I'll have to remove this `~/.local/share/virtualenvs` directory.
+We can fix this by exporting `WORKON_HOME` in our ~/.zshenv or ~/.zshrc: 
+
+`echo -e "\nexport WORKON_HOME='$HOME/.asdf/virtualenvs'" >> ~/.zshrc`
+
+Now when I run `pipenv install`, the virtualenv is installed where I want it to be.
 
 It's also created a `Pipfile` and a `Pipfile.lock`. Nice and familiar!
 
